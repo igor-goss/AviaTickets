@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Identity.Controllers
+namespace TicketServiceAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]

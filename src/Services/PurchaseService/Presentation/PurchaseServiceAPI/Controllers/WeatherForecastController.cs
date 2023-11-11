@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Purchase.Controllers
+namespace PurchaseServiceAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
