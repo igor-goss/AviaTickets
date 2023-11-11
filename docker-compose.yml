@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  identityserviceapi:
+    image: ${DOCKER_REGISTRY-}identityserviceapi
+    build:
+      context: .
+      dockerfile: src/Services/IdentityService/IdentityServiceAPI/Dockerfile
+
+  ticketserviceapi:
+    image: ${DOCKER_REGISTRY-}ticketserviceapi
+    build:
+      context: .
+      dockerfile: src/Services/TicketService/TicketServiceAPI/Dockerfile
+
+
+  purchaseserviceapi:
+    image: ${DOCKER_REGISTRY-}purchaseserviceapi
+    build:
+      context: .
+      dockerfile: src/Services/PurchaseService/Presentation/PurchaseServiceAPI/Dockerfile
+
