@@ -65,9 +65,9 @@ namespace IdentityServiceAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult UserStatus()
+        private async Task<IActionResult> UserStatus()
         {
-            var result = _userManager.GetUserName(this.User);
+            var result = await _userManager.GetUserAsync(this.User);
             _logger.LogInformation($"Current Username: {result}");
             return Ok(result);
         }

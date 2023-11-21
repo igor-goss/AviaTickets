@@ -17,18 +17,18 @@ namespace Identity.Business
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<ApplicationUser> _logger;
-        private readonly IEmailSender _emailSender;
+        //private readonly IEmailSender _emailSender;
 
         public RegisterService(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
-            ILogger<ApplicationUser> logger,
-            IEmailSender emailSender)
+            ILogger<ApplicationUser> logger
+            /*IEmailSender emailSender*/)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
-            _emailSender = emailSender;
+            //_emailSender = emailSender;
         }
 
         public async Task<IdentityResult> RegisterNewUser(
@@ -43,11 +43,13 @@ namespace Identity.Business
 
             var user = new ApplicationUser { UserName = email, Email = email };
             var result = await _userManager.CreateAsync(user, password);
+            await _userManager.AddToRoleAsync(user, "user");
             if (result.Succeeded)
             {
                 _logger.LogInformation("User created a new account with password.");
+                await _userManager.AddToRoleAsync(user, "user");
 
-                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
                 /*var callbackUrl = Url.Page(

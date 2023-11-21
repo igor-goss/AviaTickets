@@ -1,7 +1,10 @@
+using AutoMapper;
 using Duende.IdentityServer.Models;
 using Identity.Business;
 using Identity.Data;
 using Identity.Data.Entities;
+using Identity.Data.Mapper;
+using IdentityServiceAPI;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -13,8 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                    builder.Configuration.GetConnectionString("ContainerConnection")));
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services.AddIdentityServer()
@@ -52,9 +55,17 @@ builder.Services.AddLogging(options =>
     options.AddFilter("Duende", LogLevel.Debug);
 });
 
+var mapperConfig = new MapperConfiguration(options =>
+{
+    options.AddProfile(new MappingProfile());
+});
+IMapper mapper = mapperConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
+
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<LogoutService>();
 builder.Services.AddScoped<RegisterService>();
+builder.Services.AddScoped<ProfileService>();
 
 var app = builder.Build();
 
@@ -73,5 +84,7 @@ app.UseIdentityServer();
 app.UseAuthorization();
 
 app.MapControllers();
+
+await SeedData.Seed(app);
 
 app.Run();

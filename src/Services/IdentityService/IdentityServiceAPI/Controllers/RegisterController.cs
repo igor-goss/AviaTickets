@@ -17,20 +17,20 @@ namespace IdentityServiceAPI.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<ApplicationUser> _logger;
-        private readonly IEmailSender _emailSender;
+        //private readonly IEmailSender _emailSender;
         private readonly RegisterService _registerService;
 
         public RegisterController(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             ILogger<ApplicationUser> logger,
-            IEmailSender emailSender,
+            //IEmailSender emailSender,
             RegisterService registerService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
-            _emailSender = emailSender;
+            //_emailSender = emailSender;
             _registerService = registerService;
         }
 
