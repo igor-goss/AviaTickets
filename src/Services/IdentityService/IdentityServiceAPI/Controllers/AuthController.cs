@@ -8,18 +8,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityServiceAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class IdentityController : ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly IIdentityService _identityService;
 
-        public IdentityController(IIdentityService identityService)
+        public AuthController(IIdentityService identityService)
         {
             _identityService = identityService;
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<IActionResult> RegisterNewUser(SignUpDTO signUpDTO)
         {
             var result = await _identityService.RegisterNewUserAsync(signUpDTO);
@@ -27,7 +27,7 @@ namespace IdentityServiceAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDTO loginDTO) 
         {
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
@@ -37,36 +37,13 @@ namespace IdentityServiceAPI.Controllers
             return Ok(result);
         }
 
-        [HttpDelete]
+        [HttpDelete("logout")]
         [Authorize]
         public async Task<IActionResult> Logout()
         {
             await _identityService.LogoutAsync();
 
             return Ok();
-        }
-
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> GetCurrentUserProfile()
-        {
-            return Ok(await _identityService.GetCurrentUserProfileAsync(this.User));
-        }
-
-        [HttpPut]
-        [Authorize]
-        public async Task<IActionResult> EditCurrentUser(UserDTO updatedUser)
-        {
-            return Ok(await _identityService.EditCurrentUserProfileAsync(this.User, updatedUser));
-        }
-
-        [HttpPut]
-        [Authorize]
-        public async Task<IActionResult> ChangePassword(string oldPassword, string newPassword)
-        {
-            var result = await _identityService.ChangePasswordAsync(this.User, oldPassword, newPassword);
-
-            return Ok(result);
         }
     }
 }

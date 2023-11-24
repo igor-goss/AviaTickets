@@ -5,8 +5,8 @@ using Identity.Data;
 using Identity.Data.Mapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using IdentityServiceAPI;
 using IdentityServiceAPI.Middleware;
+using IdentityServiceAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +45,7 @@ var mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
 builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 var app = builder.Build();
 

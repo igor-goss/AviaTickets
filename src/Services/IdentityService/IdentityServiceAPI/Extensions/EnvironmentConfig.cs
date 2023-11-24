@@ -1,7 +1,7 @@
 ﻿using Identity.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace IdentityServiceAPI
+namespace IdentityServiceAPI.Extensions
 {
     public static class EnvironmentConfig
     {
