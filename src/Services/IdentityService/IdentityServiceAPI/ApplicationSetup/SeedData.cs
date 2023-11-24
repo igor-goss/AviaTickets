@@ -1,4 +1,5 @@
 ﻿using Identity.Data;
+using Identity.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -7,28 +8,31 @@ using System.Drawing.Text;
 
 namespace IdentityServiceAPI
 {
-    public class SeedData
+    public static class SeedData
     {
-        public static async Task Seed(WebApplication app)
+        public static async Task SeedAsync(this WebApplication app)
         {
             using var scope = app.Services.CreateScope();
-            var _roleManager = 
+            var _roleManager =
                 scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var _context = 
+            var _context =
                 scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
             await _context.Database.MigrateAsync();
             await _context.SaveChangesAsync();
 
-            if (!await _roleManager.RoleExistsAsync("user"))
+            var userRoleExists = await _roleManager.RoleExistsAsync("user");
+            var adminRoleExists = await _roleManager.RoleExistsAsync("admin");
+
+            if (!userRoleExists)
             {
-                await _roleManager.CreateAsync(new IdentityRole("user"));
-            }
-            if (!await _roleManager.RoleExistsAsync("admin"))
-            {
-                await _roleManager.CreateAsync(new IdentityRole("admin"));
+                await _roleManager.CreateAsync(new IdentityRole(Roles.User.ToString()));
             }
 
+            if (!adminRoleExists)
+            {
+                await _roleManager.CreateAsync(new IdentityRole(Roles.Admin.ToString()));
+            }
         }
     }
 }

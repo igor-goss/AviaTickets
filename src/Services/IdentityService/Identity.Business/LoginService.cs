@@ -43,7 +43,7 @@ namespace Identity.Business
             }
             else
             {
-                _logger.LogError("Something wromg, but we didn't implement it yet :/");
+                _logger.LogError("Something wrong, but we didn't implement it yet :/");
             }
 
             return result;

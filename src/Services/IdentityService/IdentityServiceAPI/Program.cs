@@ -1,49 +1,30 @@
 using AutoMapper;
-using Duende.IdentityServer.Models;
-using Identity.Business;
+using Identity.Business.Services.Implementations;
+using Identity.Business.Services.Interfaces;
 using Identity.Data;
-using Identity.Data.Entities;
 using Identity.Data.Mapper;
-using IdentityServiceAPI;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Configuration;
+using IdentityServiceAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.Docker.json", optional: false);
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("ContainerConnection")));
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
-    .AddEntityFrameworkStores<AppDbContext>();
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddIdentityServer()
-                .AddInMemoryClients(new Client[] {
-                    new Client
-                    {
-                        ClientId = "client",
-                        AllowedGrantTypes = GrantTypes.Implicit,
-                        RedirectUris = { "https://localhost:5002/signin-oidc" },
-                        PostLogoutRedirectUris = { "https://localhost:5002/signout-callback-oidc" },
-                        FrontChannelLogoutUri = "https://localhost:5002/signout-oidc",
-                        AllowedScopes = { "openid", "profile", "email", "phone" }
-                    }
-                })
-                .AddInMemoryIdentityResources(new IdentityResource[] {
-                    new IdentityResources.OpenId(),
-                    new IdentityResources.Profile(),
-                    new IdentityResources.Email(),
-                    new IdentityResources.Phone(),
-                })
-                .AddAspNetIdentity<ApplicationUser>();
+builder.SetupIdentity(); //Extension method from IdentitySetup.cs
 
-builder.Services.AddLogging(options =>
-{
-    options.AddFilter("Duende", LogLevel.Debug);
-});
+builder.Services.AddAuthentication()
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddGoogle(googleOptions =>
+    {
+        googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+        googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+
+        googleOptions.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    });
 
 builder.Services.AddControllers();
 
@@ -59,17 +40,13 @@ var mapperConfig = new MapperConfiguration(options =>
 {
     options.AddProfile(new MappingProfile());
 });
-IMapper mapper = mapperConfig.CreateMapper();
+var mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
-builder.Services.AddScoped<LoginService>();
-builder.Services.AddScoped<LogoutService>();
-builder.Services.AddScoped<RegisterService>();
-builder.Services.AddScoped<ProfileService>();
+builder.Services.AddScoped<IIdentityService, IdentityService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -80,11 +57,12 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseIdentityServer();
 app.UseAuthorization();
 
 app.MapControllers();
 
-await SeedData.Seed(app);
+await app.SeedAsync();
 
 app.Run();

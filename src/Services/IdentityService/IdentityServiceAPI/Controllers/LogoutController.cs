@@ -31,5 +31,7 @@ namespace IdentityServiceAPI.Controllers
             await _logoutService.Logout();
             return Ok();
         }
+
+
     }
 }
