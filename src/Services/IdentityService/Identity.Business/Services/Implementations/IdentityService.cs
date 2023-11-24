@@ -1,16 +1,12 @@
 ﻿using AutoMapper;
 using Identity.Business.DTOs;
+using Identity.Business.Exceptions;
 using Identity.Business.Services.Interfaces;
 using Identity.Data.DTOs;
 using Identity.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Identity.Business.Services.Implementations
 {
@@ -38,14 +34,12 @@ namespace Identity.Business.Services.Implementations
         {
             if (signUpDTO.Password == null)
             {
-                _logger.LogError("Password not provided");
-                return null;
+                throw new RegistrationFailedException("Password not provided");
             }
 
             if (signUpDTO.Password != signUpDTO.ConfirmPassword)
             {
-                _logger.LogError("The password and confirmation password do not match");
-                return null;
+                throw new RegistrationFailedException("Passwords don't match");
             }
 
             var user = new ApplicationUser { UserName = signUpDTO.Email, Email = signUpDTO.Email };
@@ -71,7 +65,7 @@ namespace Identity.Business.Services.Implementations
             }
             else
             {
-                _logger.LogError("Something wrong, but we didn't implement it yet :/");
+                throw new InvalidCredentialsException("Invalid username or password");
             }
 
             return result;

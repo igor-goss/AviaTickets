@@ -1,10 +1,7 @@
 ﻿using Identity.Data;
 using Identity.Data.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol.Plugins;
-using System.Drawing.Text;
 
 namespace IdentityServiceAPI
 {
@@ -21,8 +18,8 @@ namespace IdentityServiceAPI
             await _context.Database.MigrateAsync();
             await _context.SaveChangesAsync();
 
-            var userRoleExists = await _roleManager.RoleExistsAsync("user");
-            var adminRoleExists = await _roleManager.RoleExistsAsync("admin");
+            var userRoleExists = await _roleManager.RoleExistsAsync(Roles.User.ToString());
+            var adminRoleExists = await _roleManager.RoleExistsAsync(Roles.Admin.ToString());
 
             if (!userRoleExists)
             {

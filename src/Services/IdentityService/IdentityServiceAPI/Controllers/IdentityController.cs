@@ -1,10 +1,8 @@
-﻿using Identity.Business;
-using Identity.Business.DTOs;
+﻿using Identity.Business.DTOs;
 using Identity.Business.Services.Interfaces;
 using Identity.Data.DTOs;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,14 +23,8 @@ namespace IdentityServiceAPI.Controllers
         public async Task<IActionResult> RegisterNewUser(SignUpDTO signUpDTO)
         {
             var result = await _identityService.RegisterNewUserAsync(signUpDTO);
-            if (result.Succeeded)
-            {
-                return Ok(result);
-            }
-            else
-            {
-                return BadRequest(result);
-            }
+            
+            return Ok(result);
         }
 
         [HttpPost]
@@ -42,21 +34,15 @@ namespace IdentityServiceAPI.Controllers
 
             var result = await _identityService.LoginAsync(loginDTO);
 
-            if (result.Succeeded)
-            {
-                return Ok(result);
-            }
-            else
-            {
-                return BadRequest(result);
-            }
+            return Ok(result);
         }
 
-        [HttpPost]
+        [HttpDelete]
         [Authorize]
         public async Task<IActionResult> Logout()
         {
             await _identityService.LogoutAsync();
+
             return Ok();
         }
 
@@ -80,12 +66,7 @@ namespace IdentityServiceAPI.Controllers
         {
             var result = await _identityService.ChangePasswordAsync(this.User, oldPassword, newPassword);
 
-            if (result.Succeeded)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
+            return Ok(result);
         }
     }
 }
