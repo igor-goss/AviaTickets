@@ -59,14 +59,12 @@ namespace Identity.Business.Services.Implementations
             var result = await _signInManager.PasswordSignInAsync(loginDTO.Email, loginDTO.Password,
                 loginDTO.RememberMe, lockoutOnFailure: false);
 
-            if (result.Succeeded)
-            {
-                _logger.LogInformation("User logged in.");
-            }
-            else
+            if (!result.Succeeded)
             {
                 throw new InvalidCredentialsException("Invalid username or password");
             }
+
+            _logger.LogInformation("User logged in.");
 
             return result;
         }
@@ -92,11 +90,9 @@ namespace Identity.Business.Services.Implementations
         {
             var user = await _userManager.GetUserAsync(claimsPrincipal);
 
-            user.CardNo = updatedUser.CardNo; //I don't know how to update only this fields, while keeping other untouched using AutoMapper
-            user.Email = updatedUser.Email;
-            user.FirstName = updatedUser.FirstName;
-            user.LastName = updatedUser.LastName;
-            user.PhoneNumber = updatedUser.PhoneNumber;
+            user = _mapper.Map<ApplicationUser>(user);
+
+            _mapper.Map(updatedUser, user);
 
             await _userManager.UpdateAsync(user);
 
@@ -109,6 +105,11 @@ namespace Identity.Business.Services.Implementations
            string newPassword)
         {
             var user = await _userManager.GetUserAsync(claimsPrincipal);
+
+            if (user == null)
+            {
+                return null;
+            }
 
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
 
