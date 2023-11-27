@@ -19,21 +19,21 @@ namespace IdentityServiceAPI.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetCurrentUserProfile()
+        public async Task<IActionResult> GetCurrentUserProfileAsync()
         {
             return Ok(await _identityService.GetCurrentUserProfileAsync(this.User));
         }
 
         [HttpPut]
         [Authorize]
-        public async Task<IActionResult> EditCurrentUser(UserDTO updatedUser)
+        public async Task<IActionResult> EditCurrentUserAsync(UserDTO updatedUser)
         {
             return Ok(await _identityService.EditCurrentUserProfileAsync(this.User, updatedUser));
         }
 
         [HttpPut("password")]
         [Authorize]
-        public async Task<IActionResult> ChangePassword(string oldPassword, string newPassword)
+        public async Task<IActionResult> ChangePasswordAsync(string oldPassword, string newPassword)
         {
             var result = await _identityService.ChangePasswordAsync(this.User, oldPassword, newPassword);
 

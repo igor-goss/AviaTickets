@@ -17,16 +17,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.SetupIdentity(); //Extension method from IdentitySetup.cs
 
-builder.Services.AddAuthentication()
-    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddGoogle(googleOptions =>
-    {
-        googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-        googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-
-        googleOptions.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    });
-
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -61,7 +51,6 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
-app.UseAuthentication();
 app.UseIdentityServer();
 app.UseAuthorization();
 

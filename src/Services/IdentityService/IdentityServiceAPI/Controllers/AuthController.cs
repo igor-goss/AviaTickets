@@ -20,7 +20,7 @@ namespace IdentityServiceAPI.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterNewUser(SignUpDTO signUpDTO)
+        public async Task<IActionResult> RegisterNewUserAsync(SignUpDTO signUpDTO)
         {
             var result = await _identityService.RegisterNewUserAsync(signUpDTO);
             
@@ -28,7 +28,7 @@ namespace IdentityServiceAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDTO loginDTO) 
+        public async Task<IActionResult> LoginAsync(LoginDTO loginDTO) 
         {
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
@@ -39,7 +39,7 @@ namespace IdentityServiceAPI.Controllers
 
         [HttpDelete("logout")]
         [Authorize]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> LogoutAsync()
         {
             await _identityService.LogoutAsync();
 
