@@ -107,13 +107,6 @@ namespace Identity.Business.Services.Implementations
            ClaimsPrincipal claimsPrincipal,
            PasswordChangeDTO passwordChangeDTO)
         {
-            var ValidationResult = _validator.Validate(passwordChangeDTO);
-
-            if (!ValidationResult.IsValid)
-            {
-                throw new PasswordChangeFailedException("Passwords doesn't match");
-            }
-
             var user = await _userManager.GetUserAsync(claimsPrincipal);
 
             if (user == null)
