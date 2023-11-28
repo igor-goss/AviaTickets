@@ -1,4 +1,5 @@
 ﻿using Identity.Business.Exceptions;
+using System.Reflection.Metadata;
 
 namespace IdentityServiceAPI.Middleware
 {
@@ -32,6 +33,20 @@ namespace IdentityServiceAPI.Middleware
                 _logger.LogError($"Registrtion failed: {ex.Message}");
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 await context.Response.WriteAsync("Registration failed.");
+            }
+
+            catch (PasswordChangeFailedException ex)
+            {
+                _logger.LogError($"Password change failed. {ex.Message}");
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await context.Response.WriteAsync("Password change failed");
+            }
+
+            catch (UserNotFoundException ex)
+            {
+                _logger.LogError($"User not found. {ex.Message}");
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await context.Response.WriteAsync("User does not exist");
             }
 
             catch (Exception ex)

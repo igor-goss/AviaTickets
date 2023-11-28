@@ -7,26 +7,20 @@ namespace IdentityServiceAPI.Extensions
     {
         public static string EnvConfig(this WebApplicationBuilder builder) //have to finish 
         {
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
+            var env = Environment.GetEnvironmentVariable("IS_RUNNING_IN_CONTAINER");
 
             string connectionString;
 
-            if (env == "DockerDevelopment")
+            if (env == "True")
             {
-                connectionString = builder.Configuration.GetConnectionString("ContainerConnection");
                 builder.Configuration.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.Docker.json", optional: false);
+                connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             }
             else
             {
-                connectionString = builder.Configuration.GetConnectionString("LocalConnection");
                 builder.Configuration.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.Development.json", optional: false);
+                connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             }
-
-            builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(
-                builder.Configuration.GetConnectionString("DefaultConnection")));
-
             return connectionString;
         }
     }

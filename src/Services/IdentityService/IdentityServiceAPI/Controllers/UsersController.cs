@@ -1,4 +1,5 @@
-﻿using Identity.Business.Services.Interfaces;
+﻿using Identity.Business.DTOs;
+using Identity.Business.Services.Interfaces;
 using Identity.Data.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -33,9 +34,9 @@ namespace IdentityServiceAPI.Controllers
 
         [HttpPut("password")]
         [Authorize]
-        public async Task<IActionResult> ChangePasswordAsync(string oldPassword, string newPassword)
+        public async Task<IActionResult> ChangePasswordAsync(PasswordChangeDTO passwordChangeDTO)
         {
-            var result = await _identityService.ChangePasswordAsync(this.User, oldPassword, newPassword);
+            var result = await _identityService.ChangePasswordAsync(this.User, passwordChangeDTO);
 
             return Ok(result);
         }

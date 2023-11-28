@@ -7,13 +7,17 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using IdentityServiceAPI.Middleware;
 using IdentityServiceAPI;
+using IdentityServiceAPI.Extensions;
+using Identity.Business.DTOs;
+using Microsoft.AspNetCore.Identity;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.Docker.json", optional: false);
+var connectionString = builder.EnvConfig(); //choosing correct appsettings.json and getting connection string 
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+               options.UseSqlServer(connectionString));
 
 builder.SetupIdentity(); //Extension method from IdentitySetup.cs
 
@@ -35,6 +39,8 @@ var mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
 builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddScoped<IValidator<PasswordChangeDTO>, Identity.Business.Validators.PasswordValidator>();
+
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 var app = builder.Build();

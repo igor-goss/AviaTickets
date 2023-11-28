@@ -12,6 +12,6 @@ namespace Identity.Business.Services.Interfaces
         public Task LogoutAsync();
         public Task<UserDTO> GetCurrentUserProfileAsync(ClaimsPrincipal claimsPrincipal);
         public Task<UserDTO> EditCurrentUserProfileAsync(ClaimsPrincipal claimsPrincipal, UserDTO updatedUser);
-        public Task<IdentityResult> ChangePasswordAsync(ClaimsPrincipal claimsPrincipal, string oldPassword, string newPassword);
+        public Task<IdentityResult> ChangePasswordAsync(ClaimsPrincipal claimsPrincipal, PasswordChangeDTO passwordChangeDTO);
     }
 }

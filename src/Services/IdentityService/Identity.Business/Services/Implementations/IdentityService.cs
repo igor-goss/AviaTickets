@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Identity.Business.DTOs;
 using Identity.Business.Exceptions;
 using Identity.Business.Services.Interfaces;
@@ -16,17 +17,20 @@ namespace Identity.Business.Services.Implementations
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<IdentityService> _logger;
         private readonly IMapper _mapper;
+        private readonly IValidator<PasswordChangeDTO> _validator;
 
         public IdentityService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<IdentityService> logger,
-            IMapper mapper)
+            IMapper mapper,
+            IValidator<PasswordChangeDTO> validator)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _mapper = mapper;
+            _validator = validator;
         }
 
         public async Task<IdentityResult> RegisterNewUserAsync(
@@ -101,17 +105,23 @@ namespace Identity.Business.Services.Implementations
 
         public async Task<IdentityResult> ChangePasswordAsync(
            ClaimsPrincipal claimsPrincipal,
-           string oldPassword,
-           string newPassword)
+           PasswordChangeDTO passwordChangeDTO)
         {
+            var ValidationResult = _validator.Validate(passwordChangeDTO);
+
+            if (!ValidationResult.IsValid)
+            {
+                throw new PasswordChangeFailedException("Passwords doesn't match");
+            }
+
             var user = await _userManager.GetUserAsync(claimsPrincipal);
 
             if (user == null)
             {
-                return null;
+                throw new UserNotFoundException("User does not exist");
             }
 
-            var changePasswordResult = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+            var changePasswordResult = await _userManager.ChangePasswordAsync(user, passwordChangeDTO.OldPassword, passwordChangeDTO.NewPassword);
 
             if (!changePasswordResult.Succeeded)
             {
@@ -119,6 +129,8 @@ namespace Identity.Business.Services.Implementations
                 {
                     _logger.LogError(error.Description);
                 }
+
+                throw new PasswordChangeFailedException("Password change failed");
             }
 
             await _signInManager.RefreshSignInAsync(user);
