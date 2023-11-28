@@ -8,7 +8,9 @@ namespace Identity.Business.Validators
         public PasswordValidator()
         {
             RuleFor(x => x.OldPassword).NotEmpty();
+
             RuleFor(x => x.NewPassword).NotEmpty();
+
             RuleFor(x => x.NewPassword).NotEqual(x => x.OldPassword);
         }
     }

@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IdentityServiceAPI.Extensions
 {
-    public static class EnvironmentConfig
+    public static class EnvironmentConfiguration
     {
-        public static string EnvConfig(this WebApplicationBuilder builder) //have to finish 
+        public static string ConfigureDatabaseConnection(this WebApplicationBuilder builder)
         {
             var env = Environment.GetEnvironmentVariable("IS_RUNNING_IN_CONTAINER");
 

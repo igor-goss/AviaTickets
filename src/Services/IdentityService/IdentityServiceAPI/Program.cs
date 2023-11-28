@@ -11,10 +11,11 @@ using IdentityServiceAPI.Extensions;
 using Identity.Business.DTOs;
 using Microsoft.AspNetCore.Identity;
 using FluentValidation;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.EnvConfig(); //choosing correct appsettings.json and getting connection string 
+var connectionString = builder.ConfigureDatabaseConnection(); //choosing correct appsettings.json and getting connection string 
 
 builder.Services.AddDbContext<AppDbContext>(options =>
                options.UseSqlServer(connectionString));
@@ -39,7 +40,9 @@ var mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
 builder.Services.AddScoped<IIdentityService, IdentityService>();
-builder.Services.AddScoped<IValidator<PasswordChangeDTO>, Identity.Business.Validators.PasswordValidator>();
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<Identity.Business.Validators.PasswordValidator>();
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
