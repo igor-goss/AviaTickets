@@ -36,16 +36,6 @@ namespace Identity.Business.Services.Implementations
         public async Task<IdentityResult> RegisterNewUserAsync(
             SignUpDTO signUpDTO)
         {
-            if (signUpDTO.Password == null)
-            {
-                throw new RegistrationFailedException("Password not provided");
-            }
-
-            if (signUpDTO.Password != signUpDTO.ConfirmPassword)
-            {
-                throw new RegistrationFailedException("Passwords don't match");
-            }
-
             var user = new ApplicationUser { UserName = signUpDTO.Email, Email = signUpDTO.Email };
             var result = await _userManager.CreateAsync(user, signUpDTO.Password);
 
