@@ -3,13 +3,10 @@ using Identity.Business.Services.Implementations;
 using Identity.Business.Services.Interfaces;
 using Identity.Data;
 using Identity.Data.Mapper;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using IdentityServiceAPI.Middleware;
 using IdentityServiceAPI;
 using IdentityServiceAPI.Extensions;
-using Identity.Business.DTOs;
-using Microsoft.AspNetCore.Identity;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 

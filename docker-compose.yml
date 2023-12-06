@@ -23,7 +23,6 @@ services:
       - "5434:1433"
     networks:
       - dev
-    
 
 
   ticketserviceapi:
@@ -31,6 +30,19 @@ services:
     build:
       context: .
       dockerfile: src/Services/TicketService/TicketServiceAPI/Dockerfile
+    networks:
+      - dev
+
+  sqldataticket:
+    container_name: sqldataticket
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+    ports:
+      - "5435:1433"
+    networks:
+      - dev
 
   purchaseserviceapi:
     image: ${DOCKER_REGISTRY-}purchaseserviceapi
@@ -40,3 +52,4 @@ services:
 
 volumes:
   sqldataidentity:
+  sqldataticket:  
