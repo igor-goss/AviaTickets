@@ -12,7 +12,7 @@ using Ticket.Persistence;
 namespace Ticket.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231205212512_initial")]
+    [Migration("20231208075735_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

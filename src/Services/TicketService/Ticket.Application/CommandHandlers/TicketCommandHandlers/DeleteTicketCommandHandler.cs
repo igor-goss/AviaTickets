@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
+using MediatR;
 using Ticket.Application.Commands.TicketCommands;
 using Ticket.Application.DTO;
 using Ticket.Persistence.Repositories.Interfaces;
 
 namespace Ticket.Application.CommandHandlers.TicketCommandHandlers
 {
-    public class DeleteTicketCommandHandler
+    public class DeleteTicketCommandHandler : IRequestHandler<DeleteTicketCommand>
     {
         private readonly ITicketRepository _ticketRepository;
         private readonly IMapper _mapper;
@@ -18,10 +19,8 @@ namespace Ticket.Application.CommandHandlers.TicketCommandHandlers
             _mapper = mapper;
         }
 
-        public async Task Handle(DeleteTicketDTO deleteTicketDTO)
+        public async Task Handle(DeleteTicketCommand command, CancellationToken cancellationToken)
         {
-            var command = _mapper.Map<DeleteTicketCommand>(deleteTicketDTO);
-
             await _ticketRepository.DeleteAsync(command.Id);
 
             return;

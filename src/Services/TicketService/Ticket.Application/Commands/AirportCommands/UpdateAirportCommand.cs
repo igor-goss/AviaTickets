@@ -1,10 +1,10 @@
-﻿namespace Ticket.Application.Commands.AirportCommands
+﻿using MediatR;
+using Ticket.Application.DTO;
+
+namespace Ticket.Application.Commands.AirportCommands
 {
-    public class UpdateAirportCommand
+    public class UpdateAirportCommand : IRequest
     {
-        public string Name { get; set; }
-        public string City { get; set; }
-        public string Country { get; set; }
-        public string Abbreviation { get; set; }
+        public UpdateAirportDTO UpdateAirportDTO { get; set; }
     }
 }

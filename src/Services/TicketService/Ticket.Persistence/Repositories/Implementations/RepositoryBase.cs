@@ -46,14 +46,14 @@ namespace Ticket.Persistence.Repositories.Implementations
 
         public virtual async Task DeleteAsync(int id)
         {
-            var entity = await _dbContext.Airports.FindAsync(id);
+            var entity = await _dbContext.Set<T>().FindAsync(id);
 
             if (entity == null)
             {
                 throw new EntityNotFoundException($"Entity with ID {id} not found.");
             }
 
-            _dbContext.Airports.Remove(entity);
+            _dbContext.Set<T>().Remove(entity);
 
             await _dbContext.SaveChangesAsync();
         }

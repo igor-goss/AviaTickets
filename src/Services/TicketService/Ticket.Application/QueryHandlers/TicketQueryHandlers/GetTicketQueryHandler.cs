@@ -1,33 +1,24 @@
-﻿using Ticket.Persistence.Repositories.Interfaces;
+﻿using MediatR;
+using Ticket.Application.Queries.TicketQueries;
+using Ticket.Persistence.Repositories.Interfaces;
 
 namespace Ticket.Application.QueryHandlers.TicketQueryHandlers
 {
-    public class GetTicketQueryHandler
+    public class GetTicketQueryHandler : IRequestHandler<GetTicketQuery, Domain.Entities.Ticket>
     {
         private readonly ITicketRepository _ticketRepository;
-        private readonly IAirportRepository _airportRepository;
 
         public GetTicketQueryHandler(
-            ITicketRepository ticketRepository,
-            IAirportRepository airportRepository)
+            ITicketRepository ticketRepository)
         {
             _ticketRepository = ticketRepository;
-            _airportRepository = airportRepository;
         }
 
-        public async Task<IEnumerable<Domain.Entities.Ticket>> Handle(int TicketNumber)
+        public async Task<Domain.Entities.Ticket> Handle(GetTicketQuery query, CancellationToken cancellationToken)
         {
-            var result = new List<Domain.Entities.Ticket>();
+            var ticket = await _ticketRepository.GetByTicketNumberAsync(query.TicketNumber);
 
-            var ticket = await _ticketRepository.GetByTicketNumberAsync(TicketNumber);
-
-            var departureAirport = await _airportRepository.GetByNameAsync(ticket.FromAirport.Name);
-
-            result.Add(await _ticketRepository.GetByTicketNumberAsync(TicketNumber));
-
-            result.AddRange(_ticketRepository.GetByOrigin(departureAirport.Name));
-
-            return result;
+            return ticket;
         }
     }
 }

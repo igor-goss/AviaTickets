@@ -16,16 +16,6 @@ namespace TicketServiceAPI.Extensions
     {
         public static void ConfigureServices(this WebApplicationBuilder builder)
         {
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-            builder.Services.AddDbContext<AppDbContext>(options =>
-                           options.UseSqlServer(connectionString));
-
-            builder.Services.AddControllers();
-
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
             var mapperConfig = new MapperConfiguration(options =>
             {
                 options.AddProfile(new MappingProfile());
@@ -41,7 +31,7 @@ namespace TicketServiceAPI.Extensions
             builder.Services.AddScoped<GetAirportsQueryHandler>();
             builder.Services.AddScoped<CreateAirportCommandHandler>();
             builder.Services.AddScoped<DeleteAirportCommandHandler>();
-            builder.Services.AddScoped<UpdateAirportCommandHandler>();
+            builder.Services.AddScoped<UpdateAirportCommandHandler>(); 
             builder.Services.AddScoped<CreateTicketCommandHandler>();
             builder.Services.AddScoped<UpdateTicketCommandHandler>();
             builder.Services.AddScoped<DeleteTicketCommandHandler>();

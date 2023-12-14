@@ -20,7 +20,7 @@ namespace Ticket.Persistence.Repositories.Implementations
                 .Include(t => t.FromAirport)
                 .SingleOrDefaultAsync(a => a.TicketNumber == ticketNumber);
 
-            return result == null ? throw new EntityNotFoundException($"Ticket with number {ticketNumber} not found.") : result;
+            return result;
         }
 
         public IEnumerable<Domain.Entities.Ticket> GetByOrigin(string airportName)
@@ -30,7 +30,7 @@ namespace Ticket.Persistence.Repositories.Implementations
                 .Include(t => t.FromAirport)
                 .Include(t => t.ToAirport);
 
-            return result == null ? throw new EntityNotFoundException($"Ticket with origin airport {airportName} not found.") : result;
+            return result;
         }
 
         public IEnumerable<Domain.Entities.Ticket> GetByDestianation(string airportName)
@@ -40,7 +40,7 @@ namespace Ticket.Persistence.Repositories.Implementations
                 .Include(t => t.FromAirport)
                 .Include(t => t.ToAirport);
 
-            return result == null ? throw new EntityNotFoundException($"Ticket with destination airport {airportName} not found.") : result;
+            return result;
         }
 
         public IEnumerable<IEnumerable<Domain.Entities.Ticket>> FindRoutesBetweenCities(string originCity, string destinationCity)

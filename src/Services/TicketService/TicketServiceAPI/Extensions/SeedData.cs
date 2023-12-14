@@ -12,14 +12,14 @@ namespace TicketServiceAPI.Extensions
             var dbContext =
                 scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
+            await dbContext.Database.MigrateAsync();
+            await dbContext.SaveChangesAsync();
+
             if (dbContext.Airports.Any() || dbContext.Tickets.Any())
             {
                 // Data already seeded
                 return;
             }
-
-            await dbContext.Database.MigrateAsync();
-            await dbContext.SaveChangesAsync();
 
             SeedAirports(dbContext);
             SeedTickets(dbContext);
@@ -64,7 +64,6 @@ namespace TicketServiceAPI.Extensions
 
                 while (fromAirportId == toAirportId)
                 {
-                    // Ensure different airports for origin and destination
                     toAirportId = airportIds[random.Next(airportIds.Count)];
                 }
 

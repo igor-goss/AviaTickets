@@ -1,6 +1,8 @@
-﻿namespace Ticket.Application.Commands.AirportCommands
+﻿using MediatR;
+
+namespace Ticket.Application.Commands.AirportCommands
 {
-    public class DeleteAirportCommand
+    public class DeleteAirportCommand : IRequest
     {
         public int Id { get; set; }
     }

@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
+using MediatR;
 using Ticket.Application.Commands.AirportCommands;
 using Ticket.Application.DTO;
 using Ticket.Domain.Entities;
+using Ticket.Persistence.Exceptions;
 using Ticket.Persistence.Repositories.Interfaces;
 
 namespace Ticket.Application.CommandHandlers.AirportCommandHandlers
 {
-    public class CreateAirportCommandHandler
+    public class CreateAirportCommandHandler : IRequestHandler<CreateAirportCommand>
     {
         private readonly IAirportRepository _airportRepository;
         private readonly IMapper _mapper;
@@ -19,18 +21,25 @@ namespace Ticket.Application.CommandHandlers.AirportCommandHandlers
             _mapper = mapper;
         }
 
-        public async Task Handle(CreateAirportDTO createAirportDTO)
+        public async Task Handle(CreateAirportCommand command, CancellationToken cancellationToken)
         {
-            var command = _mapper.Map<CreateAirportCommand>(createAirportDTO);
+            Airport existingAirport = null;
 
-
-            var existingAirport = await _airportRepository.GetByNameAsync(command.Name);
-            if (existingAirport != null)
+            try
             {
-                throw new InvalidOperationException($"An airport with the name {command.Name} already exists.");
+                existingAirport = await _airportRepository.GetByNameAsync(command.CreateAirportDTO.Name);
+            }
+            catch (EntityNotFoundException ex)
+            {
+
             }
 
-            var airport = _mapper.Map<Airport>(command);
+            if (existingAirport != null)
+            {
+                throw new InvalidOperationException($"An airport with the name {command.CreateAirportDTO.Name} already exists.");
+            }
+
+            var airport = _mapper.Map<Airport>(command.CreateAirportDTO);
 
             await _airportRepository.AddAsync(airport);
 

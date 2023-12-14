@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
+using MediatR;
 using Ticket.Application.Commands.AirportCommands;
-using Ticket.Application.DTO;
 using Ticket.Domain.Entities;
 using Ticket.Persistence.Repositories.Interfaces;
 
 namespace Ticket.Application.CommandHandlers.AirportCommandHandlers
 {
-    public class UpdateAirportCommandHandler
+    public class UpdateAirportCommandHandler : IRequestHandler<UpdateAirportCommand>
     {
         private readonly IAirportRepository _airportRepository;
         private readonly IMapper _mapper;
@@ -19,21 +19,18 @@ namespace Ticket.Application.CommandHandlers.AirportCommandHandlers
             _mapper = mapper;
         }
 
-        public async Task Handle(UpdateAirportDTO updateAirportDTO)
+        public async Task Handle(UpdateAirportCommand updateAirportCommand, CancellationToken cancellationToken)
         {
-            var command = _mapper.Map<UpdateAirportDTO>(updateAirportDTO);
-
-            var existingAirport = await _airportRepository.GetByNameAsync(command.Name);
+            var existingAirport = await _airportRepository.GetByNameAsync(updateAirportCommand.UpdateAirportDTO.Name);
 
             if (existingAirport == null)
             {
-                throw new InvalidOperationException($"An airport with the name {command.Name} doesn't exists.");
+                throw new InvalidOperationException($"An airport with the name {updateAirportCommand.UpdateAirportDTO.Name} doesn't exists.");
             }
 
-            var updatedAirport = _mapper.Map<Airport>(command);
+            var updatedAirport = _mapper.Map<Airport>(updateAirportCommand.UpdateAirportDTO);
 
             await _airportRepository.UpdateAsync(updatedAirport);
-            return;
         }
     }
 }

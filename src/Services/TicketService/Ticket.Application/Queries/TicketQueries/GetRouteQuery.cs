@@ -1,6 +1,8 @@
-﻿namespace Ticket.Application.Queries.TicketQueries
+﻿using MediatR;
+
+namespace Ticket.Application.Queries.TicketQueries
 {
-    public class GetRouteQuery
+    public class GetRouteQuery : IRequest<IEnumerable<IEnumerable<Domain.Entities.Ticket>>>
     {
         public string OriginCity { get; set; }
         public string DestinationCity { get; set; }

@@ -1,9 +1,11 @@
-﻿using Ticket.Domain.Entities;
+﻿using MediatR;
+using Ticket.Application.Queries.AirportQueries;
+using Ticket.Domain.Entities;
 using Ticket.Persistence.Repositories.Interfaces;
 
 namespace Ticket.Application.QueryHandlers.AirportQueryHandlers
 {
-    public class GetAirportsQueryHandler
+    public class GetAirportsQueryHandler : IRequestHandler<GetAirportsQuery, IEnumerable<Airport>>
     {
         private readonly IAirportRepository _airportRepository;
 
@@ -13,31 +15,31 @@ namespace Ticket.Application.QueryHandlers.AirportQueryHandlers
             _airportRepository = airportRepository;
         }
 
-        public async Task<IEnumerable<Airport>> Handle(string? Name, string? Abbreviation, string? City, string? Country)
+        public async Task<IEnumerable<Airport>> Handle(GetAirportsQuery getAirportsQuery, CancellationToken cancellationToken)
         {
             var result = new List<Airport>();
 
-            if (Name != null)
+            if (getAirportsQuery.Name != null)
             {
-                var query = await _airportRepository.GetByNameAsync(Name);
+                var query = await _airportRepository.GetByNameAsync(getAirportsQuery.Name);
                 result.Add(query);
             }
 
-            if (Abbreviation != null)
+            if (getAirportsQuery.Abbreviation != null)
             {
-                var query = await _airportRepository.GetByNameAbbreviationAsync(Abbreviation);
+                var query = await _airportRepository.GetByNameAbbreviationAsync(getAirportsQuery.Abbreviation);
                 result.Add(query);
             }
 
-            if (City != null)
+            if (getAirportsQuery.City != null)
             {
-                var query = _airportRepository.GetByCity(City);
+                var query = _airportRepository.GetByCity(getAirportsQuery.City);
                 result.AddRange(query);
             }
 
-            if (Country != null)
+            if (getAirportsQuery.Country != null)
             {
-                var query = _airportRepository.GetByCountry(Country);
+                var query = _airportRepository.GetByCountry(getAirportsQuery.Country);
                 result.AddRange(query);
             }
 
