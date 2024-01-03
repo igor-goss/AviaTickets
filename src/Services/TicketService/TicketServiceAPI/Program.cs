@@ -1,11 +1,19 @@
+using Ticket.Application.CommandHandlers.TicketCommandHandlers;
+using TicketServiceAPI.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.ConfigureDatabase();
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.ConfigureServices();
+
+builder.Services.AddMediatR(opt =>
+opt.RegisterServicesFromAssemblies(typeof(CreateTicketCommandHandler).Assembly));
 
 var app = builder.Build();
 
@@ -21,5 +29,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+await app.Initialize();
 
 app.Run();

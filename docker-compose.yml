@@ -1,0 +1,55 @@
+version: '3.4'
+
+networks:
+  dev:
+    driver: bridge
+
+services:
+  identityserviceapi:
+    image: ${DOCKER_REGISTRY-}identityserviceapi
+    build:
+      context: .
+      dockerfile: src/Services/IdentityService/IdentityServiceAPI/Dockerfile
+    networks:
+      - dev
+  
+  sqldataidentity:
+    container_name: sqldataidentity
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+    ports:
+      - "5434:1433"
+    networks:
+      - dev
+
+
+  ticketserviceapi:
+    image: ${DOCKER_REGISTRY-}ticketserviceapi
+    build:
+      context: .
+      dockerfile: src/Services/TicketService/TicketServiceAPI/Dockerfile
+    networks:
+      - dev
+
+  sqldataticket:
+    container_name: sqldataticket
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+    ports:
+      - "5435:1433"
+    networks:
+      - dev
+
+  purchaseserviceapi:
+    image: ${DOCKER_REGISTRY-}purchaseserviceapi
+    build:
+      context: .
+      dockerfile: src/Services/PurchaseService/Presentation/PurchaseServiceAPI/Dockerfile
+
+volumes:
+  sqldataidentity:
+  sqldataticket:  
